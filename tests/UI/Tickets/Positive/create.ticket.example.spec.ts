@@ -2,7 +2,9 @@ import { test, expect } from "@playwright/test";
 import { testConfig } from "../../../config";
 
 test.describe("Tickets - Function Tests", () => {
-  test("should test functionalities in tickets page", async ({ page }) => {
+  test("should test Create functionalities in tickets page", async ({
+    page,
+  }) => {
     await page.goto(testConfig.getUrl(testConfig.pages.tickets));
     await page.waitForLoadState("networkidle");
 
