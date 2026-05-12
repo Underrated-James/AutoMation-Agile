@@ -1,56 +1,60 @@
 import { test, expect } from "@playwright/test";
 import { testConfig } from "../../../config";
 
+// ==================== SELECTORS ====================
+const SELECTORS = {
+  pageTitle: "Users | KPI Digest | Agile Digest",
+  mainHeading: "Team Members",
+  filterByRole: "Filter by Role",
+  addUserButton: /Add User/i,
+  deleteSelectedButton: /Delete Selected/i,
+  searchInput: 'input[placeholder*="Search by keyword"]',
+  table: "table",
+  rowsPerPageText: "Rows per page:",
+  tableHeaders: ["Name", "Email", "Role", "Status", "Actions"],
+} as const;
+
+// ==================== TESTS ====================
 test.describe("Users Page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(testConfig.getUrl(testConfig.pages.users));
+    await page.waitForLoadState("networkidle");
   });
 
-  test("Should render users page correctly", async ({ page }) => {
-    //wait for page to fully load before test
-    await page.waitForLoadState("networkidle");
+  test("should render users page correctly", async ({ page }) => {
+    // Page Metadata
+    await expect(page).toHaveTitle(SELECTORS.pageTitle);
 
-    // Page Title
-    await expect(page).toHaveTitle("Users | KPI Digest | Agile Digest");
-
-    // Main Heading
+    // Main Content
     await expect(
-      page.getByRole("heading", {
-        name: "Team Members",
-        level: 1,
-      }),
+      page.getByRole("heading", { name: SELECTORS.mainHeading, level: 1 })
     ).toBeVisible();
 
-    //Filter Buttons
-    await expect(page.getByText("Filter by Role")).toBeVisible();
-
-    // Buttons
+    // Filters & Controls
+    await expect(page.getByText(SELECTORS.filterByRole)).toBeVisible();
     await expect(
-      page.getByRole("button", {
-        name: /Add User/i,
-      }),
+      page.getByRole("button", { name: SELECTORS.addUserButton })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: SELECTORS.deleteSelectedButton })
     ).toBeVisible();
 
-    // Buttons
-    await expect(
-      page.getByRole("button", {
-        name: /Delete Selected/i,
-      }),
-    ).toBeVisible();
+    // Search
+    await expect(page.locator(SELECTORS.searchInput)).toBeVisible();
 
-    // Table headers
-    const headers = ["Name", "Email", "ROle", "Status", "Actions"];
+    // Table
+    await expect(page.locator(SELECTORS.table)).toBeVisible();
 
-    for (const header of headers) {
+    // Table Headers
+    for (const header of SELECTORS.tableHeaders) {
       await expect(
-        page.getByRole("columnheader", { name: header }),
+        page.getByRole("columnheader", { name: header, exact: true })
       ).toBeVisible();
     }
 
-    await expect(page.getByRole("table")).toBeVisible();
+    // Pagination
+    await expect(page.getByText(SELECTORS.rowsPerPageText)).toBeVisible();
 
-    await expect(page.getByText("Rows per page:")).toBeVisible();
-
-    await expect(page.getByPlaceholder("Search by keyword...")).toBeVisible();
+    console.log("✅ Users page rendered successfully with all expected elements");
   });
 });
