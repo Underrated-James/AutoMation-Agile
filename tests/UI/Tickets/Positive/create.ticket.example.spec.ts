@@ -37,13 +37,14 @@ test.describe("Tickets - Function Tests", () => {
     });
 
     // === Fill Ticket Title ===
+    const uniqueTitle = `Fix login issue ${Date.now()}`;
     const titleField = form
       .getByPlaceholder(/ticket title/i)
       .or(form.getByLabel(/title/i))
       .or(form.locator('input[placeholder*="Ticket title"]'))
       .first();
 
-    await titleField.fill("Fix login issue");
+    await titleField.fill(uniqueTitle);
     await titleField.press("Tab");
 
     // === Fill Description Link ===
