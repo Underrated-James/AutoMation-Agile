@@ -2,6 +2,7 @@ import { test } from "@playwright/test";
 import { testConfig } from "../../../config";
 
 test.describe("Tickets - Function Tests", () => {
+  test.describe.configure({ mode: 'serial' });
   test("should test Delete functionalities in tickets page", async ({
     page,
   }) => {
